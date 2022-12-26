@@ -38,8 +38,8 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: "Run awk script"
-      id: awk
+    - name: "Get Config"
+      id: config
       shell: bash
       env:
         STD_INPUT: ${{ inputs.input }}
@@ -58,8 +58,22 @@ runs:
           echo "${PROG_TEXT}" >> "${PROG_FULL}"
         fi
 
+        echo "prog-file=${PROG_FULL}" >> "${GITHUB_OUTPUT}"
+
+    - name: "Debug Grawk"
+      if: runner.debug == 1
+      shell: bash
+      run: |
+        cat "${{ steps.config.prog-file }}"
+
+    - name: "Run awk script"
+      id: awk
+      shell: bash
+      env:
+        SEPARATOR: ${{ inputs.separator }}
+      run: |
         {
           echo "result<<EOF"
-          echo "${STD_INPUT}" | awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${PROG_FULL}"
+          echo "${STD_INPUT}" | awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${{ steps.config.prog-file }}"
           echo "EOF"
         } | tee -a "${GITHUB_OUTPUT}"
