@@ -64,7 +64,7 @@ runs:
       if: runner.debug == 1
       shell: bash
       run: |
-        cat "${{ steps.config.prog-file }}"
+        cat "${{ steps.config.outputs.prog-file }}"
 
     - name: "Run awk script"
       id: awk
@@ -74,6 +74,6 @@ runs:
       run: |
         {
           echo "result<<EOF"
-          echo "${STD_INPUT}" | awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${{ steps.config.prog-file }}"
+          echo "${STD_INPUT}" | awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${{ steps.config.outputs.prog-file }}"
           echo "EOF"
         } | tee -a "${GITHUB_OUTPUT}"
