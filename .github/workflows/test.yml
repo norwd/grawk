@@ -31,8 +31,10 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        if: steps.grawk.outputs.results != 'Hello World!'
-        run: exit 1
+        run: test "${HAVE}" = "${WANT}"
+        env:
+          HAVE: ${{ steps.grawk.outputs.results }}
+          WANT: ${{ 'Hello World!' }}
 
   both-program-and-program-file:
     name: Both Program and Program File
@@ -55,5 +57,7 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        if: steps.grawk.outputs.results != join(fromJSON('["PROGRAM_FILE", "PROGRAM"]'), '\n')
-        run: exit 1
+        run: test "${HAVE}" = "${WANT}"
+        env:
+          HAVE: ${{ steps.grawk.outputs.results }}
+          WANT: ${{ join(fromJSON('["PROGRAM_FILE", "PROGRAM"]'), '\n') }}
