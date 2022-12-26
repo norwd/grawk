@@ -87,3 +87,44 @@ jobs:
         env:
           HAVE: ${{ steps.grawk.outputs.result }}
           WANT: "PROGRAM_FILE\nPROGRAM"
+
+  input-with-default-separator:
+    name: Process Input With Default Separator
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: grawk
+        name: Run Grawk
+        uses: ./
+        with:
+          input: "a,b,c, d,e,f, g,h,i,"
+          program: "{ print $2 }"
+
+      - name: Assert Output Is Correct
+        run: test "${HAVE}" = "${WANT}"
+        env:
+          HAVE: ${{ steps.grawk.outputs.result }}
+          WANT: "d,e,f,"
+
+  input-with-given-separator:
+    name: Process Input With Specified Separator
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: grawk
+        name: Run Grawk
+        uses: ./
+        with:
+          separator: ","
+          input: "a,b,c, d,e,f, g,h,i,"
+          program: "{ print $2 }"
+
+      - name: Assert Output Is Correct
+        run: test "${HAVE}" = "${WANT}"
+        env:
+          HAVE: ${{ steps.grawk.outputs.result }}
+          WANT: "b"
