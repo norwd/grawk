@@ -3,6 +3,10 @@
 name: Run Tests
 on: push
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   empty:
     name: Empty Program
