@@ -1,0 +1,66 @@
+---
+
+name: grawk
+author: norwd
+description: "GitHub Action to grok stuff... with AWK!"
+
+branding:
+  icon: code
+  color: red
+
+inputs:
+  input:
+    required: true
+    description: |
+      The input to the awk program.
+
+  separator:
+    required: false
+    description: |
+      The input field separator.
+
+  program:
+    required: false
+    description: |
+      The text of the awk program.
+
+  program-file:
+    required: false
+    description: |
+      The pathname of the file containing an awk program.
+
+outputs:
+  result:
+    value: ${{ steps.awk.outputs.result }}
+    description: |
+      The result of the awk script.
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Run awk script"
+      id: awk
+      shell: bash
+      env:
+        SEPARATOR: ${{ inputs.separator }}
+        PROG_TEXT: ${{ inputs.program }}
+        PROG_FILE: ${{ inputs.program-file }}
+        PROG_FULL: ${{ runner.temp }}/gr.awk
+      run: |
+        if [ -f "${PROG_FILE}" ]
+        then
+          cat "${PROG_FILE}" >> "${PROG_FULL}"
+        fi
+
+        if [ -z "${PROG_TEXT}" ]
+        then
+          echo "${PROG_TEXT}" >> "${PROG_FULL}"
+        fi
+
+        {
+          echo "result<<EOF"
+
+          awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${PROG_FULL}"
+
+          echo "EOF"
+        } | tee -a "${GITHUB_OUTPUT}"
