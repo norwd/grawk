@@ -31,14 +31,10 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        run: |
-          HAVE="${{ steps.grawk.outputs.result }}"
-          WANT="${{ 'Hello World!' }}"
-
-          echo "HAVE=${HAVE}"
-          echo "WANT=${WANT}"
-
-          test "${HAVE}" = "${WANT}"
+        run: test "${HAVE}" = "${WANT}"
+        env:
+          HAVE: ${{ steps.grawk.outputs.result }}
+          WANT: ${{ 'Hello World!' }}
 
   both-program-and-program-file:
     name: Both Program and Program File
@@ -61,12 +57,7 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        run: |
-          HAVE="${{ steps.grawk.outputs.result }}"
-          WANT="${{ join(fromJSON('["PROGRAM_FILE", "PROGRAM"]'), '
-          ') }}"
-
-          echo "HAVE=${HAVE}"
-          echo "WANT=${WANT}"
-
-          test "${HAVE}" = "${WANT}"
+        run: test "${HAVE}" = "${WANT}"
+        env:
+          HAVE: ${{ steps.grawk.outputs.result }}
+          WANT: ${{ join(fromJSON('["PROGRAM_FILE", "PROGRAM"]'), '\U000A') }}"
