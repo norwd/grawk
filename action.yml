@@ -58,6 +58,8 @@ runs:
           echo "${PROG_TEXT}" >> "${PROG_FULL}"
         fi
 
+        echo "" >> "${PROG_FULL}"
+
         echo "prog-file=${PROG_FULL}" >> "${GITHUB_OUTPUT}"
 
     - name: "Debug Grawk"
