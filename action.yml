@@ -42,11 +42,11 @@ runs:
       id: config
       shell: bash
       env:
-        STD_INPUT: ${{ inputs.input }}
-        SEPARATOR: ${{ inputs.separator }}
-        PROG_TEXT: ${{ inputs.program }}
+        STD_INPUT: ${{ inputs.input        }}
+        SEPARATOR: ${{ inputs.separator    }}
+        PROG_TEXT: ${{ inputs.program      }}
         PROG_FILE: ${{ inputs.program-file }}
-        PROG_FULL: ${{ runner.temp }}/gr.awk
+        PROG_FULL: ${{ runner.temp         }}/gr.awk
       run: |
         if [ -f "${PROG_FILE}" ]
         then
@@ -65,8 +65,7 @@ runs:
     - name: "Debug Grawk"
       if: runner.debug == 1
       shell: bash
-      run: |
-        cat "${{ steps.config.outputs.prog-file }}"
+      run: cat "${{ steps.config.outputs.prog-file }}"
 
     - name: "Run awk script"
       id: awk
