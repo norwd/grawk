@@ -31,8 +31,8 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        run: |
-          [ ${{ steps.grawk.outputs.results }} = "Hello World!" ]
+        if: steps.grawk.outputs.results == 'Hello World!'
+        run: exit 1
 
   both-program-and-program-file:
     name: Both Program and Program File
@@ -55,5 +55,5 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        run: |
-          [ ${{ steps.grawk.outputs.results }} = "PROGRAM_FILE\nPROGRAM" ]
+        if: steps.grawk.outputs.results == join(fromJSON('["PROGRAM_FILE", "PROGRAM"]'), '\n')
+        run: exit 1
