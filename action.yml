@@ -74,8 +74,12 @@ runs:
       env:
         SEPARATOR: ${{ inputs.separator }}
       run: |
-        {
-          echo "result<<EOF"
+        RESULT="$(
           echo "${STD_INPUT}" | awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${{ steps.config.outputs.prog-file }}"
-          echo "EOF"
-        } | tee -a "${GITHUB_OUTPUT}"
+        )"
+
+        RESULT="${RESULT//'%'/'%25'}"
+        RESULT="${RESULT//$'\n'/'%0A'}"
+        RESULT="${RESULT//$'\r'/'%0D'}"
+
+        echo "result=${RESULT}" >> "${GITHUB_OUTPUT}"
