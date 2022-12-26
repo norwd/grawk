@@ -60,4 +60,4 @@ jobs:
         run: test "${HAVE}" = "${WANT}"
         env:
           HAVE: ${{ steps.grawk.outputs.result }}
-          WANT: ${{ join(fromJSON('["PROGRAM_FILE", "PROGRAM"]'), '\U000A') }}"
+          WANT: ${{ join(fromJSON('["PROGRAM_FILE", "PROGRAM"]'), '\U000A') }}
