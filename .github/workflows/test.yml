@@ -31,7 +31,8 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        run: [ ${{ steps.grawk.outputs.results }} = "Hello World!" ]
+        run: |
+          [ ${{ steps.grawk.outputs.results }} = "Hello World!" ]
 
   both-program-and-program-file:
     name: Both Program and Program File
@@ -54,4 +55,5 @@ jobs:
             }
 
       - name: Assert Output Is Correct
-        run: [ ${{ steps.grawk.outputs.results }} = "PROGRAM_FILE\nPROGRAM" ]
+        run: |
+          [ ${{ steps.grawk.outputs.results }} = "PROGRAM_FILE\nPROGRAM" ]
