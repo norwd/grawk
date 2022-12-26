@@ -37,7 +37,7 @@ jobs:
   both-program-and-program-file:
     name: Both Program and Program File
     runs-on: ubuntu-latest
-    stesp:
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
 
