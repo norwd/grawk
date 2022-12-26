@@ -1,0 +1,57 @@
+---
+
+name: Run Tests
+on: push
+
+jobs:
+  empty:
+    name: Empty Program
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run Grawk
+        uses: ./
+
+  hello-world:
+    name: Hello World
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: grawk
+        name: Run Grawk
+        uses: ./
+        with:
+          program: |
+            BEGIN {
+              print "Hello World!"
+            }
+
+      - name: Assert Output Is Correct
+        run: [ ${{ steps.grawk.outputs.results }} = "Hello World!" ]
+
+  both-program-and-program-file:
+    name: Both Program and Program File
+    runs-on: ubuntu-latest
+    stesp:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create Script
+        run: echo 'BEGIN { print "PROGRAM_FILE" }' > script.awk
+
+      - id: grawk
+        name: Run Grawk
+        uses: ./
+        with:
+          program-file: ./script.awk
+          program: |
+            BEGIN {
+              print "PROGRAM"
+            }
+
+      - name: Assert Output Is Correct
+        run: [ ${{ steps.grawk.outputs.results }} = "PROGRAM_FILE\nPROGRAM" ]
