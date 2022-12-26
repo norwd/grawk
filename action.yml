@@ -42,6 +42,7 @@ runs:
       id: awk
       shell: bash
       env:
+        STD_INPUT: ${{ inputs.input }}
         SEPARATOR: ${{ inputs.separator }}
         PROG_TEXT: ${{ inputs.program }}
         PROG_FILE: ${{ inputs.program-file }}
@@ -59,8 +60,6 @@ runs:
 
         {
           echo "result<<EOF"
-
-          awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${PROG_FULL}"
-
+          echo "${STD_INPUT}" | awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${PROG_FULL}"
           echo "EOF"
         } | tee -a "${GITHUB_OUTPUT}"
