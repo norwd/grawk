@@ -53,7 +53,7 @@ runs:
           cat "${PROG_FILE}" >> "${PROG_FULL}"
         fi
 
-        if [ -z "${PROG_TEXT}" ]
+        if [ ! -z "${PROG_TEXT}" ]
         then
           echo "${PROG_TEXT}" >> "${PROG_FULL}"
         fi
