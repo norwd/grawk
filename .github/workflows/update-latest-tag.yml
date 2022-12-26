@@ -1,0 +1,120 @@
+---
+
+name: "Update Latest Version"
+run-name: "Updating Latest Version to ${{ github.ref_name }}"
+permissions:
+
+  # for metadata
+  contents: read
+  issues: read
+  pull-requests: read
+
+  # for publishing
+  deployments: write
+  discussions: write
+  packages: write
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  semver:
+    name: "Parse Semantic Version"
+    runs-on: ubuntu-latest
+    outputs:
+      major: ${{ steps.components.outputs.major }}
+      minor: ${{ steps.components.outputs.minor }}
+      patch: ${{ steps.components.outputs.patch }}
+    steps:
+      - name: "Parse Version Components"
+        id: components
+        run: |
+          echo "${{ github.ref_name }}" | sed 's/^v//g' | awk -F . 'END { print "major=" $1 "\n" "minor=" $2 "\n" "patch=" $3 }' | tee -a "${GITHUB_OUTPUT}"
+
+  major_version:
+    name: "Get Major Version"
+    needs: [semver]
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: "Get Version Details"
+        id: version
+        run: |
+          echo "tag=v${{ needs.semver.outputs.major }}" | tee -a "${GITHUB_OUTPUT}"
+
+  major_and_minor_version:
+    name: "Get Major and Minor Versions"
+    needs: [semver]
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: "Get Version Details"
+        id: version
+        run: |
+          echo "tag=v${{ needs.semver.outputs.major }}.${{ needs.semver.outputs.minor }}" | tee -a "${GITHUB_OUTPUT}"
+
+  major_minor_and_patch_version:
+    name: "Get Major, Minor, and Patch Versions"
+    needs: [semver]
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: "Get Version Details"
+        id: version
+        run: |
+          echo "tag=v${{ needs.semver.outputs.major }}.${{ needs.semver.outputs.minor }}.${{ needs.semver.outputs.patch }}" | tee -a "${GITHUB_OUTPUT}"
+
+  tag:
+    name: "Tag ${{ matrix.tag }}"
+    needs:
+      - major_version
+      - major_and_minor_version
+      - major_minor_and_patch_version
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tag: ${{ fromJSON(toJSON(needs.*.outputs.tag)) }}
+        exclude:
+          - tag: "${{ github.ref_name }}"
+
+    steps:
+      - name: "Checkout ${{ github.ref_name }}"
+        uses: actions/checkout@v3.2.0
+        with:
+          token: "${{ secrets.AUTO_TAG_GRAWK }}"
+          ref: "${{ github.ref_name }}"
+
+      - name: "Setup Git Credentials"
+        uses: oleksiyrudenko/gha-git-credentials@v2.1.1
+        with:
+          global: true
+          name: "norwd"
+          actor: "norwd"
+          email: "106889957+norwd@users.noreply.github.com"
+          token: "${{ secrets.AUTO_TAG_GRAWK }}"
+
+      - name: "Setup GPG Signing Key"
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.AUTO_COMMIT_GPG_PRIVATE_KEY_GRAWK }}
+          passphrase: ${{ secrets.AUTO_COMMIT_GPG_PASSPHRASE_GRAWK }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: "Tag ${{ matrix.tag }} at ${{ github.ref_name }}"
+        run: |
+          git tag --force --annotate --sign --message "Latest ${{ matrix.tag }} Compatable Version" "${{ matrix.tag }}" "${{ github.ref_name }}"
+
+      - name: "Push ${{ matrix.tag }}"
+        run: |
+          git push --force --tags
