@@ -1,0 +1,52 @@
+---
+
+#
+# Release Changelog
+#
+# See: https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+#
+
+changelog:
+  exclude:
+    labels:
+      - "skip-changelog"
+      - "no-changelog"
+
+    authors: []
+
+  categories:
+
+    - title: "\U0001F680 Features"
+      labels:
+        - "feature"
+        - "enhancement"
+
+    - title: "\U0001F41B Bug Fixes"
+      labels:
+        - "fix"
+        - "bugfix"
+        - "bug"
+
+    - title: "\U0001F9F0 Maintenance"
+      labels:
+        - "chore"
+        - "github"
+
+    - title: "\U00012B06 Dependencies"
+      labels:
+        - "dependencies"
+        - "deps"
+
+    - title: "\U0001F4D6 Documentation"
+      labels:
+        - "documentation"
+        - "docs"
+        - "doc"
+
+    - title: "\U0001F6E1️ Security"
+      labels:
+        - "security"
+
+    - title: "Other Changes"
+      labels:
+        - "*"
