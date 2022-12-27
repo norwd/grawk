@@ -1,6 +1,6 @@
 ---
 
-name: Grawk
+name: Grok with AWK
 author: norwd
 description: "GitHub Action to grok stuff... with AWK!"
 
