@@ -1,0 +1,54 @@
+---
+
+#
+# This workflow is an anti-spam measure.
+#
+
+name: Audit
+run-name: Audit for ${{ github.event_name }} event
+
+on:
+  discussion_comment:
+    types:
+      - created
+      - edited
+      - deleted
+
+  issue_comment:
+    types:
+      - created
+      - edited
+      - deleted
+
+  ### DEPRECATED ###
+  # pull_request_comment:
+  #   types:
+  #     - created
+  #     - edited
+  #     - deleted
+
+  pull_request_review:
+    types:
+      - submitted
+      - edited
+      - dismissed
+
+  pull_request_review_comment:
+    types:
+      - created
+      - edited
+      - deleted
+
+  watch:
+    types:
+      - started
+
+jobs:
+  record-comment:
+    name: Recording Comment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump Event
+        run: echo "${EVENT}"
+        env:
+          EVENT: ${{ toJSON(github.event) }}
