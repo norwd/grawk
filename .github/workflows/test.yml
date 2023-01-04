@@ -143,8 +143,8 @@ jobs:
           input-file: .github/testing/students.csv
           separator: ','
           program: |
-            $1 == Alex {
-              print $2, $1: $3 year old $4 student
+            $1 == "Alex" {
+              print $2 ", " $1 ": " $3 " year old " $4 " student"
             }
 
       - name: Assert Output Is Correct
