@@ -78,6 +78,10 @@ The pathname of the file containing an awk program.
 
 The input to the awk program.
 
+#### `input-file`
+
+The pathname of the file containing the input to the awk program.
+
 #### `separator`
 
 The input field separator.

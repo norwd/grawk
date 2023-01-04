@@ -1,0 +1,20 @@
+---
+
+name: "Pull Request Labeler"
+run-name: "Assigning labels for #${{ github.event.number }}"
+permissions:
+  pull-requests: write
+
+on:
+  - pull_request_target
+
+jobs:
+  label:
+    name: Label Pull Request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add Labels
+        uses: actions/labeler@v4
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          sync-labels: true
