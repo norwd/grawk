@@ -46,47 +46,50 @@ runs:
     - name: "Get Config"
       id: config
       shell: bash
-      env:
-        DATA_TEXT: ${{ inputs.input        }}
-        DATA_FILE: ${{ inputs.input-file   }}
-        DATA_FULL: ${{ runner.temp         }}/std.in
-        SEPARATOR: ${{ inputs.separator    }}
-        PROG_TEXT: ${{ inputs.program      }}
-        PROG_FILE: ${{ inputs.program-file }}
-        PROG_FULL: ${{ runner.temp         }}/gr.awk
       run: |
-        if [ -f "${DATA_FILE}" ]
-        then
-          cat "${DATA_FILE}" >> "${DATA_FULL}"
-        fi
+        echo "data-file=${{ runner.temp }}/std.in" >> "${GITHUB_OUTPUT}"
+        echo "prog-file=${{ runner.temp }}/gr.awk" >> "${GITHUB_OUTPUT}"
 
-        if [ ! -z "${DATA_TEXT}" ]
-        then
-          echo "${DATA_TEXT}" >> "${DATA_FULL}"
-        fi
+    - name: "Create Standard Input"
+      shell: bash
+      run: touch "${{ steps.config.outputs.data-file }}"
 
-        echo "" >> "${DATA_FULL}"
+    - name: "Add Input File to Standard Input"
+      if: inputs.input-file != ''
+      shell: bash
+      run: cat "${DATA_FILE}" >> "${{ steps.config.outputs.data-file }}"
+      env:
+        DATA_FILE: ${{ inputs.input-file }}
 
-        echo "data-file=${DATA_FULL}" >> "${GITHUB_OUTPUT}"
-
-        if [ -f "${PROG_FILE}" ]
-        then
-          cat "${PROG_FILE}" >> "${PROG_FULL}"
-        fi
-
-        if [ ! -z "${PROG_TEXT}" ]
-        then
-          echo "${PROG_TEXT}" >> "${PROG_FULL}"
-        fi
-
-        echo "" >> "${PROG_FULL}"
-
-        echo "prog-file=${PROG_FULL}" >> "${GITHUB_OUTPUT}"
+    - name: "Add Raw Input to Standard Input"
+      if: inputs.input != ''
+      shell: bash
+      run: echo "${DATA_TEXT}" >> "${{ steps.config.outputs.data-file }}"
+      env:
+        DATA_TEXT: ${{ inputs.input }}
 
     - name: "Debug Grawk Input"
       if: runner.debug == 1
       shell: bash
       run: cat "${{ steps.config.outputs.data-file }}"
+
+    - name: "Create Program"
+      shell: bash
+      run: touch "${{ steps.config.outputs.prog-file }}"
+
+    - name: "Add Program File to Program"
+      if: inputs.program-file != ''
+      shell: bash
+      run: cat "${DATA_FILE}" >> "${{ steps.config.outputs.prog-file }}"
+      env:
+        PROG_FILE: ${{ inputs.program-file }}
+
+    - name: "Add Raw Program to Program"
+      if: inputs.program != ''
+      shell: bash
+      run: echo "${DATA_TEXT}" >> "${{ steps.config.outputs.prog-file }}"
+      env:
+        PROG_TEXT: ${{ inputs.program }}
 
     - name: "Debug Grawk Program"
       if: runner.debug == 1
@@ -100,7 +103,6 @@ runs:
         SEPARATOR: ${{ inputs.separator }}
       run: |
         delimiter="$(openssl rand -hex 8)"
-
         echo "result<<${delimiter}" >> "${GITHUB_OUTPUT}"
         cat "${{ steps.config.outputs.data-file }}" | awk ${{ inputs.separator && '-F "${SEPARATOR}"' || '' }} -f "${{ steps.config.outputs.prog-file }}" | tee -a "${GITHUB_OUTPUT}"
         echo "${delimiter}" >> "${GITHUB_OUTPUT}"
