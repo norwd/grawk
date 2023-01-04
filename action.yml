@@ -62,7 +62,7 @@ runs:
 
         if [ ! -z "${DATA_TEXT}" ]
         then
-          echo "${DATA_TEXT}" >> "$DATA_FULL}"
+          echo "${DATA_TEXT}" >> "${DATA_FULL}"
         fi
 
         echo "" >> "${DATA_FULL}"
