@@ -57,14 +57,14 @@ runs:
     - name: "Add Input File to Standard Input"
       if: inputs.input-file != ''
       shell: bash
-      run: cat "${DATA_FILE}" >> "${{ steps.config.outputs.data-file }}"
+      run: cat "${DATA_FILE}" | tee -a "${{ steps.config.outputs.data-file }}"
       env:
         DATA_FILE: ${{ inputs.input-file }}
 
     - name: "Add Raw Input to Standard Input"
       if: inputs.input != ''
       shell: bash
-      run: echo "${DATA_TEXT}" >> "${{ steps.config.outputs.data-file }}"
+      run: echo "${DATA_TEXT}" | tee -a "${{ steps.config.outputs.data-file }}"
       env:
         DATA_TEXT: ${{ inputs.input }}
 
@@ -80,14 +80,14 @@ runs:
     - name: "Add Program File to Program"
       if: inputs.program-file != ''
       shell: bash
-      run: cat "${DATA_FILE}" >> "${{ steps.config.outputs.prog-file }}"
+      run: cat "${DATA_FILE}" | tee -a "${{ steps.config.outputs.prog-file }}"
       env:
         PROG_FILE: ${{ inputs.program-file }}
 
     - name: "Add Raw Program to Program"
       if: inputs.program != ''
       shell: bash
-      run: echo "${DATA_TEXT}" >> "${{ steps.config.outputs.prog-file }}"
+      run: echo "${DATA_TEXT}" | tee -a "${{ steps.config.outputs.prog-file }}"
       env:
         PROG_TEXT: ${{ inputs.program }}
 
