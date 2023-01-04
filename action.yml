@@ -80,14 +80,14 @@ runs:
     - name: "Add Program File to Program"
       if: inputs.program-file != ''
       shell: bash
-      run: cat "${DATA_FILE}" | tee -a "${{ steps.config.outputs.prog-file }}"
+      run: cat "${PROG_FILE}" | tee -a "${{ steps.config.outputs.prog-file }}"
       env:
         PROG_FILE: ${{ inputs.program-file }}
 
     - name: "Add Raw Program to Program"
       if: inputs.program != ''
       shell: bash
-      run: echo "${DATA_TEXT}" | tee -a "${{ steps.config.outputs.prog-file }}"
+      run: echo "${PROG_TEXT}" | tee -a "${{ steps.config.outputs.prog-file }}"
       env:
         PROG_TEXT: ${{ inputs.program }}
 
