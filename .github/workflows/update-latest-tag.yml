@@ -89,7 +89,7 @@ jobs:
 
     steps:
       - name: "Checkout ${{ github.ref_name }}"
-        uses: actions/checkout@v3.2.0
+        uses: actions/checkout@v4
         with:
           token: "${{ secrets.AUTO_TAG_GRAWK }}"
           ref: "${{ github.ref_name }}"
